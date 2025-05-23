@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakeibo_app/domain/repositories/auth_repository.dart';
-import 'package:kakeibo_app/domain/repositories/mock_auth_repository.dart';
+import 'package:kakeibo_app/domain/repositories/auth_repository_factory.dart';
 import 'package:kakeibo_app/presentation/screens/auth/login_screen.dart';
 import 'package:kakeibo_app/presentation/state/notifiers/auth_notifier.dart';
 import 'package:kakeibo_app/presentation/state/states/auth_state.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 
 // プロバイダー定義
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  // 実際の実装ではFirebase Authを使用したリポジトリを返す
-  return MockAuthRepository();
+  // 環境に応じたリポジトリを返す
+  bool useMock = false; // 開発中は必要に応じてtrueに変更
+  return AuthRepositoryFactory.create(useMock: useMock);
 });
 
 final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
@@ -17,7 +20,23 @@ final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref
   return AuthNotifier(authRepository: repository);
 });
 
-void main() {
+void main() async {
+  // Firebase初期化処理を追加
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  await Firebase.initializeApp(
+    options: kIsWeb 
+        ? const FirebaseOptions(
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID",
+          ) 
+        : null, // モバイルの場合はデフォルト設定を使用
+  );
+  
   runApp(
     const ProviderScope(
       child: MyApp(),

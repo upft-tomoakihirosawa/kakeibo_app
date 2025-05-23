@@ -342,10 +342,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       });
 
       try {
-        // 実際の実装ではAuthNotifierを使用
-        await Future.delayed(const Duration(seconds: 2)); // デモ用の遅延
+        // AuthNotifierを使用して認証処理を実行
+        final authNotifier = ref.read(authNotifierProvider.notifier);
+        await authNotifier.signInWithEmailPassword(
+          _emailController.text,
+          _passwordController.text,
+        );
         
-        // ここでは単純にホーム画面に遷移するだけ
         if (mounted) {
           setState(() {
             _isLoading = false;
@@ -374,15 +377,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     try {
-      // 実際の実装ではAuthNotifierを使用
-      await Future.delayed(const Duration(seconds: 2)); // デモ用の遅延
+      // AuthNotifierを使用してGoogle認証処理を実行
+      final authNotifier = ref.read(authNotifierProvider.notifier);
+      await authNotifier.signInWithGoogle();
       
-      // ホーム画面への遷移処理
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        // ホーム画面への遷移処理
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(builder: (context) => const HomeScreen()),
+        // );
+      }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = _formatErrorMessage(e.toString());
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = _formatErrorMessage(e.toString());
+        });
+      }
     }
   }
 
@@ -393,15 +407,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     try {
-      // 実際の実装ではAuthNotifierを使用
-      await Future.delayed(const Duration(seconds: 2)); // デモ用の遅延
+      // AuthNotifierを使用してApple認証処理を実行
+      final authNotifier = ref.read(authNotifierProvider.notifier);
+      await authNotifier.signInWithApple();
       
-      // ホーム画面への遷移処理
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        // ホーム画面への遷移処理
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(builder: (context) => const HomeScreen()),
+        // );
+      }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = _formatErrorMessage(e.toString());
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = _formatErrorMessage(e.toString());
+        });
+      }
     }
   }
 
