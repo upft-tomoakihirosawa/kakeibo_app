@@ -10,13 +10,4 @@ class User {
     this.displayName,
     this.photoUrl,
   });
-
-  factory User.fromFirebase(dynamic firebaseUser) {
-    return User(
-      id: firebaseUser.uid,
-      email: firebaseUser.email ?? '',
-      displayName: firebaseUser.displayName,
-      photoUrl: firebaseUser.photoURL,
-    );
-  }
 }
